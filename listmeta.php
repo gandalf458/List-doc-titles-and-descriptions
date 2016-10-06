@@ -23,6 +23,8 @@
  * FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
+ *
+ * Last modified 05-Oct-16 to add duplicate check
  */
 ?>
 <style>
@@ -66,6 +68,10 @@ th, td {
   $files = file($flist);
 
   $ignore = array('pdf', 'txt');
+  $titles = array();
+  $descrs = array();
+
+  // loop all files
   foreach ( $files as $file ) {
     $file = trim($file);
 
@@ -96,11 +102,22 @@ th, td {
     // output result
     echo '  <tr>', "\n";
     echo '    <td>', substr(strrchr($file, '/'), 1), '</td>', "\n";
-    echo '    <td>', $title, ' (', $t_len, ')</td>', "\n";
-    echo '    <td>', $descr, ' (', $d_len, ')</td>', "\n";
+    echo '    <td>', $title, ' (', $t_len, ') ';
+    if ( in_array($title, $titles) )
+      echo ' **';
+    echo '</td>', "\n";
+    echo '    <td>', $descr, ' (', $d_len, ') ';
+    if ( in_array($descr, $descrs) )
+      echo ' **';
+    echo '</td>', "\n";
     echo '  </tr>', "\n";
+
+    // save to check for duplicates
+    $titles[] = $title;
+    $descrs[] = $descr;
   }
   ?>
 </table>
+<p>** indicates a duplicate title or description</p>
 </body>
 </html>
